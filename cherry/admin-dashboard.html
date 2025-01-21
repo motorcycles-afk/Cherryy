@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cherry Executor</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="min-h-screen">
+    <div id="particles-js"></div>
+
+    <!-- Navigation -->
+    <nav class="glass fixed w-full top-0 z-50 px-6 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold gradient-text">Cherry Admin</div>
+            <div class="flex space-x-6">
+                <a href="index.html" class="hover:text-pink-500 transition">Home</a>
+                <button id="logoutBtn" class="hover:text-red-500 transition">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto pt-24 px-4">
+        <!-- Welcome Banner -->
+        <div class="glass p-8 mb-8 text-center">
+            <h1 class="text-4xl font-bold gradient-text mb-4">Admin Control Panel</h1>
+            <p class="text-gray-400">Manage system status and monitor activity</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <button class="glass p-6 hover:bg-pink-500/10 transition" onclick="toggleStatus('api')">
+                <h3 class="text-xl font-bold mb-2">API Status</h3>
+                <p class="text-sm text-gray-400">Toggle API availability</p>
+                <div class="mt-4" data-status="api">
+                    <i class="fas fa-circle"></i> Online
+                </div>
+            </button>
+
+            <button class="glass p-6 hover:bg-pink-500/10 transition" onclick="toggleStatus('executor')">
+                <h3 class="text-xl font-bold mb-2">Executor Status</h3>
+                <p class="text-sm text-gray-400">Toggle executor availability</p>
+                <div class="mt-4" data-status="executor">
+                    <i class="fas fa-circle"></i> Operational
+                </div>
+            </button>
+
+            <button class="glass p-6 hover:bg-pink-500/10 transition" onclick="toggleStatus('maintenance')">
+                <h3 class="text-xl font-bold mb-2">Maintenance Mode</h3>
+                <p class="text-sm text-gray-400">Toggle maintenance status</p>
+                <div class="mt-4" data-status="maintenance">
+                    <i class="fas fa-circle"></i> Off
+                </div>
+            </button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="glass p-6">
+                <h3 class="text-xl font-bold mb-4">User Statistics</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span>Total Users</span>
+                        <span class="text-green-400">5,678</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Active Sessions</span>
+                        <span class="text-blue-400">1,234</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-6">
+                <h3 class="text-xl font-bold mb-4">System Load</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span>CPU Usage</span>
+                        <span class="text-yellow-400">45%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Memory Usage</span>
+                        <span class="text-green-400">32%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Log -->
+        <div class="glass p-6">
+            <h3 class="text-xl font-bold mb-4">Recent Activity</h3>
+            <div class="space-y-3" id="activityLog">
+                <!-- Activity items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html> 
