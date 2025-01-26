@@ -25,7 +25,7 @@ api.use(express.static(path.join(__dirname, 'public')));
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
-import statusRoutes from './routes/status.js';
+const statusRoutes = require('./routes/status');
 
 // Mount routes
 api.use('/api/auth', authRoutes);
