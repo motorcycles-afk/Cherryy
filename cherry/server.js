@@ -56,7 +56,7 @@ import registerRoutes from './api/auth/register.js';
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api/auth', registerRoutes);
+app.use('/api/auth/register', registerRoutes);
 
 // Set strictQuery option
 mongoose.set('strictQuery', true);
