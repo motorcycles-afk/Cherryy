@@ -58,13 +58,23 @@ api.use((err, req, res, next) => {
 // Set strictQuery option
 mongoose.set('strictQuery', true);
 
+// Ensure required environment variables are present
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+    logger.error('MongoDB URI is not defined in environment variables');
+    throw new Error('MongoDB URI is required. Please set MONGO_URI environment variable.');
+}
+
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
-    console.log('MongoDB connected');
-}).catch(err => console.log(err));
+    logger.info('MongoDB connected successfully');
+}).catch(err => {
+    logger.error('MongoDB connection error:', err);
+    throw err;
+});
 
 // Create default admin account
 async function createDefaultAdmin() {
