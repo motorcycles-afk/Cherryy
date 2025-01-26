@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/auth/register.js": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs20.x",
+      "handler": "api/auth/register.js"
     }
   },
   "rewrites": [
