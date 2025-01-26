@@ -11,23 +11,92 @@
             background-color: #0c0d16;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
+            margin: 0;
+            overflow-x: hidden;
         }
+
+        /* Space Background */
         .space-bg {
-            background: linear-gradient(to bottom, #0c0d16 0%, #1a1b2e 100%);
-            min-height: 100vh;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
             overflow: hidden;
         }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: rotate 200s linear infinite;
+            background: transparent;
+        }
+
         .star {
             position: absolute;
             background: #fff;
             border-radius: 50%;
-            animation: twinkle 2s infinite;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
         }
+
+        .nebula {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: nebulaMove 30s ease infinite;
+            background: radial-gradient(circle at center, 
+                rgba(63, 94, 251, 0) 0%, 
+                rgba(63, 94, 251, 0.1) 30%, 
+                rgba(252, 70, 107, 0.1) 70%, 
+                rgba(252, 70, 107, 0) 100%);
+            mix-blend-mode: screen;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            backdrop-filter: blur(3px);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
+
+        @keyframes nebulaMove {
+            0%, 100% { transform: translate(-5%, -5%) scale(1.1); }
+            50% { transform: translate(5%, 5%) scale(0.9); }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+            animation: shoot var(--duration) linear infinite;
+            transform: rotate(var(--angle));
+            opacity: 0;
+        }
+
+        @keyframes shoot {
+            0% { transform: translateX(-100%) rotate(var(--angle)); opacity: 1; }
+            20% { opacity: 1; }
+            60% { opacity: 0; }
+            100% { transform: translateX(200vh) rotate(var(--angle)); opacity: 0; }
+        }
+
+        /* Rest of your existing styles */
         .nav-btn {
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
@@ -52,6 +121,7 @@
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 0.75rem;
             padding: 1.5rem;
+            backdrop-filter: blur(10px);
         }
         .redeem-btn {
             background: linear-gradient(45deg, #ec4899, #8b5cf6);
@@ -82,7 +152,16 @@
     </style>
 </head>
 <body>
+    <!-- Space Background -->
     <div class="space-bg">
+        <div class="stars" id="stars"></div>
+        <div class="nebula"></div>
+        <div class="nebula" style="animation-delay: -10s; transform: rotate(120deg);"></div>
+        <div class="nebula" style="animation-delay: -20s; transform: rotate(240deg);"></div>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
         <!-- Navigation -->
         <nav class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,21 +257,62 @@
     </div>
 
     <script>
-        // Add stars to background
+        // Create stars
         function createStars() {
-            const spaceBg = document.querySelector('.space-bg');
-            for (let i = 0; i < 100; i++) {
+            const starsContainer = document.getElementById('stars');
+            const numStars = 200;
+            
+            for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-                star.style.width = Math.random() * 2 + 'px';
-                star.style.height = star.style.width;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                spaceBg.appendChild(star);
+                
+                // Random size between 1 and 3 pixels
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration between 1 and 3 seconds
+                star.style.setProperty('--duration', `${Math.random() * 2 + 1}s`);
+                
+                starsContainer.appendChild(star);
             }
         }
+
+        // Create shooting stars
+        function createShootingStars() {
+            const container = document.querySelector('.space-bg');
+            const numShootingStars = 5;
+            
+            for (let i = 0; i < numShootingStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                
+                // Random angle between -45 and 45 degrees
+                const angle = Math.random() * 90 - 45;
+                star.style.setProperty('--angle', `${angle}deg`);
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 50}%`; // Only in top half
+                
+                // Random animation duration between 2 and 4 seconds
+                const duration = Math.random() * 2 + 2;
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                // Random delay
+                star.style.animationDelay = `${Math.random() * 10}s`;
+                
+                container.appendChild(star);
+            }
+        }
+
+        // Initialize background effects
         createStars();
+        createShootingStars();
 
         // Check authentication
         const token = localStorage.getItem('token');
@@ -201,17 +321,14 @@
             window.location.href = '/login.html';
         }
 
-        // Display username
         document.getElementById('username').textContent = user.username;
 
-        // Logout handler
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login.html';
         });
 
-        // Redeem key handler
         document.getElementById('redeemKeyBtn').addEventListener('click', async () => {
             const key = document.getElementById('licenseKey').value;
             if (!key) {
@@ -241,7 +358,6 @@
             }
         });
 
-        // Verification progress
         let currentStep = 0;
         document.getElementById('startVerification').addEventListener('click', () => {
             if (currentStep < 3) {
