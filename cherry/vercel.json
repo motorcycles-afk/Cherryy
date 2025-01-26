@@ -1,8 +1,7 @@
-{
+{ 
   "functions": {
     "api/auth/register.js": {
-      "runtime": "nodejs18.19.0",
-      "handler": "api/auth/register.js"
+      "runtime": "nodejs18.19.0"
     }
   },
   "rewrites": [
