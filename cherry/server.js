@@ -13,12 +13,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
-app.use(express.json());
 app.use(cors({
   origin: ['https://cherryy-4erdtau8k-motorcycles-afks-projects.vercel.app', 'https://getcherry.vercel.app', 'http://localhost:3000', 'https://cherryy-okja.onrender.com'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
+app.use(express.json());
 app.use(requestLogger);
 
 // Serve static files from the public directory
