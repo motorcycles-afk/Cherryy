@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cherry</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Sidebar -->
+    <div class="sidebar glass p-4">
+        <div class="sidebar-header">
+            <h1 class="text-3xl font-bold gradient-text">Cherry Admin</h1>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="#" class="active flex items-center p-4 hover:bg-gray-800/50 transition">
+                    <i class="fas fa-home mr-2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center p-4 hover:bg-gray-800/50 transition">
+                    <i class="fas fa-users mr-2"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center p-4 hover:bg-gray-800/50 transition">
+                    <i class="fas fa-key mr-2"></i>
+                    <span>Keys</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center p-4 hover:bg-gray-800/50 transition">
+                    <i class="fas fa-cog mr-2"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="logoutBtn" class="flex items-center p-4 hover:bg-gray-800/50 transition">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content ml-64 p-4">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title text-3xl font-bold mb-4">Dashboard Overview</h2>
+            <button class="btn btn-primary bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded hover:opacity-90 transition">Generate New Key</button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="card-grid grid grid-cols-3 gap-4">
+            <div class="card glass p-4">
+                <div class="card-header">
+                    <h3 class="card-title text-xl font-bold mb-2">Total Users</h3>
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="card-value text-3xl font-bold" id="totalUsers">0</div>
+            </div>
+            <div class="card glass p-4">
+                <div class="card-header">
+                    <h3 class="card-title text-xl font-bold mb-2">Active Keys</h3>
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="card-value text-3xl font-bold" id="activeKeys">0</div>
+            </div>
+            <div class="card glass p-4">
+                <div class="card-header">
+                    <h3 class="card-title text-xl font-bold mb-2">Today's Logins</h3>
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <div class="card-value text-3xl font-bold" id="todayLogins">0</div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="table-container mt-8">
+            <h3 class="text-2xl font-bold mb-4">Recent Activity</h3>
+            <table class="table-auto w-full">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">User</th>
+                        <th class="px-4 py-2">Action</th>
+                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTable">
+                    <!-- Activity rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (!token || !user || user.role !== 'admin') {
+            window.location.href = 'login.html';
+        }
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+
+        // Fetch dashboard data
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                document.getElementById('activeKeys').textContent = data.activeKeys || 0;
+                document.getElementById('todayLogins').textContent = data.todayLogins || 0;
+
+                // Update activity table
+                const activityTable = document.getElementById('activityTable');
+                activityTable.innerHTML = data.recentActivity.map(activity => `
+                    <tr>
+                        <td class="px-4 py-2">${activity.username}</td>
+                        <td class="px-4 py-2">${activity.action}</td>
+                        <td class="px-4 py-2">${new Date(activity.date).toLocaleString()}</td>
+                        <td class="px-4 py-2">${activity.status}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        }
+
+        // Initial fetch
+        fetchDashboardData();
+
+        // Refresh data every 30 seconds
+        setInterval(fetchDashboardData, 30000);
+    </script>
+</body>
+</html>
