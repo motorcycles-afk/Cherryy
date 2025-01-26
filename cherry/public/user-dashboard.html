@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Cherry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="particles-js"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold gradient-text">Cherry Executor</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="logoutBtn" class="hover:text-red-500 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto pt-24 px-4">
+        <!-- Welcome Banner -->
+        <div class="glass p-8 mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-4xl font-bold gradient-text mb-4">Welcome back, <span id="username">User</span></h1>
+                    <p class="text-gray-400">Account Status: <span class="text-green-400">Active</span></p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-400 mb-2">Key Status</div>
+                    <div id="keyStatus" class="text-yellow-400">
+                        <i class="fas fa-circle"></i> No Active Key
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Management -->
+        <div class="glass p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Key Management</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Enter Key</label>
+                    <input type="text" id="keyInput"
+                        class="w-full p-3 bg-gray-800/50 rounded border border-gray-700 focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                        placeholder="Enter your key here">
+                </div>
+                <button id="activateKeyBtn"
+                    class="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded hover:opacity-90 transition">
+                    Activate Key
+                </button>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="glass p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">System Status</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-400">System Status</p>
+                        <p id="systemStatus" class="text-green-400">
+                            <i class="fas fa-circle"></i> Operational
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400">Last Update</p>
+                        <p id="lastUpdate" class="text-gray-400">Just now</p>
+                    </div>
+                </div>
+                <div id="importantInfo" class="mt-4 p-4 bg-gray-800/50 rounded">
+                    No important announcements at this time.
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="glass p-6">
+            <h3 class="text-xl font-bold mb-4">Recent Activity</h3>
+            <div class="space-y-3" id="activityLog">
+                <!-- Activity items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notification" class="fixed bottom-4 right-4 max-w-md hidden">
+        <div class="bg-gray-800 text-white p-4 rounded-lg shadow-lg">
+            <p id="notificationText"></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#ffffff' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6
+                }
+            }
+        });
+
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!token || !user) {
+            window.location.href = '/login.html';
+        }
+
+        // Display user information
+        document.getElementById('username').textContent = user.username;
+
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+
+        // Key activation
+        document.getElementById('activateKeyBtn').addEventListener('click', async () => {
+            const key = document.getElementById('keyInput').value;
+            if (!key) {
+                showNotification('Please enter a key', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/user/activate-key', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ key })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('Key activated successfully', 'success');
+                    document.getElementById('keyStatus').innerHTML = '<i class="fas fa-circle"></i> Active';
+                    document.getElementById('keyStatus').className = 'text-green-400';
+                } else {
+                    showNotification(data.error || 'Failed to activate key', 'error');
+                }
+            } catch (error) {
+                console.error('Error activating key:', error);
+                showNotification('Failed to activate key', 'error');
+            }
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+
+            notificationText.textContent = message;
+            notification.classList.remove('hidden');
+
+            // Add color based on type
+            notification.className = 'fixed bottom-4 right-4 max-w-md';
+            if (type === 'success') {
+                notification.firstElementChild.classList.add('bg-green-600');
+            } else if (type === 'error') {
+                notification.firstElementChild.classList.add('bg-red-600');
+            } else {
+                notification.firstElementChild.classList.add('bg-gray-800');
+            }
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Fetch initial data
+        async function fetchInitialData() {
+            try {
+                // Fetch system status
+                const statusResponse = await fetch('/api/user/system-status', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const statusData = await statusResponse.json();
+                if (statusData.success) {
+                    document.getElementById('systemStatus').innerHTML = `<i class="fas fa-circle"></i> ${statusData.status}`;
+                    document.getElementById('lastUpdate').textContent = new Date(statusData.lastUpdate).toLocaleString();
+                    if (statusData.importantInfo) {
+                        document.getElementById('importantInfo').textContent = statusData.importantInfo;
+                    }
+                }
+
+                // Fetch activity log
+                const activityResponse = await fetch('/api/user/activity-log', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const activityData = await activityResponse.json();
+                if (activityData.success) {
+                    const activityLog = document.getElementById('activityLog');
+                    activityLog.innerHTML = activityData.activities.map(activity => `
+                        <div class="glass p-4 rounded">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-gray-400">${activity.action}</span>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    ${new Date(activity.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+                showNotification('Error loading dashboard data', 'error');
+            }
+        }
+
+        // Load initial data
+        fetchInitialData();
+    </script>
+</body>
+</html>
