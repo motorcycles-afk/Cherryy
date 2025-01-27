@@ -5,6 +5,7 @@ import path from 'path';
 import { logger, requestLogger } from './utils/logger.js';
 import 'dotenv/config';
 import { fileURLToPath } from 'url';
+import { inject } from "@vercel/analytics";
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -64,5 +65,7 @@ const PORT = process.env.PORT || 3000;
 api.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
 });
+
+inject();
 
 export default api;
