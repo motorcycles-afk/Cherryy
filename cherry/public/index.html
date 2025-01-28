@@ -1,0 +1,391 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry Executor - Premium Script Execution</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/ad-handler.js"></script>
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --dark: #1a1a1a;
+            --light: #ffffff;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card {
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .code-editor {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .stat-card {
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+        }
+
+        /* Dark mode toggle */
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Loading animation */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {transform: rotate(360deg);}
+        }
+
+        /* Floating animation */
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Ad container styles */
+        .ad-container {
+            margin: 20px auto;
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .adsbox {
+            position: absolute;
+            top: -999px;
+            left: -999px;
+            width: 1px;
+            height: 1px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="particles-js"></div>
+
+    <!-- Navigation -->
+    <nav class="glass fixed w-full top-0 z-50 px-6 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold gradient-text">Cherry</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-pink-500 transition">Documentation</a>
+                <a href="#" class="hover:text-pink-500 transition">Get Key</a>
+                <a href="https://discord.gg/J2JEaGmzqy" class="hover:text-pink-500 transition">Join Discord</a>
+                <a href="login.html" class="hover:text-pink-500 transition">Login</a>
+            </div>
+            <button class="md:hidden" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-64 glass transform translate-x-full transition-transform duration-300 z-40">
+        <div class="p-6 space-y-4">
+            <a href="#" class="block hover:text-pink-500">Documentation</a>
+            <a href="#" class="block hover:text-pink-500">Get Key</a>
+            <a href="#" class="block hover:text-pink-500">Join Discord</a>
+            <a href="user-dashboard.html" class="block hover:text-pink-500">Login</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20">
+        <div class="container mx-auto text-center">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text float">Cherry Executor</h1>
+            <p class="text-xl mb-10 opacity-80">Experience unparalleled script execution with 100% stability and performance</p>
+            <div class="flex justify-center space-x-4 mb-20">
+                <button class="btn-primary" onclick="showDownloadPopup()">
+                    <i class="fas fa-download mr-2"></i>Download Now
+                </button>
+                <button class="btn-primary" style="background: transparent; border: 2px solid var(--primary)">
+                    <i class="fas fa-book mr-2"></i>Learn More
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20">
+                <div class="glass p-6 stat-card">
+                    <div class="text-4xl font-bold gradient-text">100%</div>
+                    <div class="text-sm opacity-80">UNC Rating</div>
+                </div>
+                <div class="glass p-6 stat-card">
+                    <div class="text-4xl font-bold gradient-text">24/7</div>
+                    <div class="text-sm opacity-80">Support</div>
+                </div>
+                <div class="glass p-6 stat-card">
+                    <div class="text-4xl font-bold gradient-text">50K+</div>
+                    <div class="text-sm opacity-80">Active Users</div>
+                </div>
+                <div class="glass p-6 stat-card">
+                    <div class="text-4xl font-bold gradient-text">∞</div>
+                    <div class="text-sm opacity-80">Script Capacity</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 gradient-text">Advanced Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass p-8 feature-card">
+                    <i class="fas fa-bolt text-4xl gradient-text mb-4"></i>
+                    <h3 class="text-xl font-bold mb-4">Lightning Fast</h3>
+                    <p class="opacity-80">Execute scripts instantly with our optimized engine</p>
+                </div>
+                <div class="glass p-8 feature-card">
+                    <i class="fas fa-shield-alt text-4xl gradient-text mb-4"></i>
+                    <h3 class="text-xl font-bold mb-4">Secure &amp; Safe</h3>
+                    <p class="opacity-80">Advanced protection system for your security</p>
+                </div>
+                <div class="glass p-8 feature-card">
+                    <i class="fas fa-code text-4xl gradient-text mb-4"></i>
+                    <h3 class="text-xl font-bold mb-4">Script Hub</h3>
+                    <p class="opacity-80">Access thousands of pre-made scripts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script Preview Section -->
+    <section class="py-20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 gradient-text">Script Preview</h2>
+            <div class="glass p-8 max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-xl font-bold">Sample Script</div>
+                    <div class="space-x-2">
+                        <button class="btn-primary" onclick="executeScript()">Execute</button>
+                        <button class="btn-primary" style="background: transparent; border: 2px solid var(--primary)">Save</button>
+                    </div>
+                </div>
+                <div class="code-editor">
+                    <pre><code class="text-green-400">-- Cherry Executor Sample Script
+local function initialize()
+    print("Initializing Cherry...")
+    -- More code here
+end
+
+initialize()</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Metrics -->
+    <section class="py-20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 gradient-text">Performance Metrics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="glass p-8 text-center stat-card">
+                    <div class="text-3xl font-bold gradient-text">0.001s</div>
+                    <div class="text-sm opacity-80">Average Execution Time</div>
+                </div>
+                <div class="glass p-8 text-center stat-card">
+                    <div class="text-3xl font-bold gradient-text">99.9%</div>
+                    <div class="text-sm opacity-80">Success Rate</div>
+                </div>
+                <div class="glass p-8 text-center stat-card">
+                    <div class="text-3xl font-bold gradient-text">100%</div>
+                    <div class="text-sm opacity-80">Compatibility</div>
+                </div>
+                <div class="glass p-8 text-center stat-card">
+                    <div class="text-3xl font-bold gradient-text">∞</div>
+                    <div class="text-sm opacity-80">Script Capacity</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad placement -->
+    <div class="ad-container">
+        <iframe data-aa='2378720' src='//ad.a-ads.com/2378720?size=728x90' 
+                style='width:728px; height:90px; border:0px; padding:0; overflow:hidden; background-color: transparent;'>
+        </iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center">
+        <p>Made with <i class="fas fa-heart text-pink-500"></i> by Cherry Team | v3.0.0</p>
+    </footer>
+
+    <script>
+        // Particles.js Configuration
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ff6b6b'
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ff6b6b',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('translate-x-full');
+        }
+
+        // Download Popup
+        function showDownloadPopup() {
+            Swal.fire({
+                title: 'Download Cherry Executor',
+                html: `
+                    <div class="space-y-4">
+                        <p>Choose your version:</p>
+                        <button class="btn-primary w-full">Windows (64-bit)</button>
+                        <button class="btn-primary w-full">Windows (32-bit)</button>
+                        <div class="text-sm mt-4">
+                            By downloading, you agree to our Terms of Service
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                background: '#1a1a1a',
+                color: '#ffffff'
+            });
+        }
+
+        // Execute Script Animation
+        function executeScript() {
+            Swal.fire({
+                title: 'Executing Script',
+                html: '<div class="loader mx-auto"></div>',
+                showConfirmButton: false,
+                timer: 1500,
+                background: '#1a1a1a',
+                color: '#ffffff'
+            });
+        }
+    </script>
+
+
+</body></html>
