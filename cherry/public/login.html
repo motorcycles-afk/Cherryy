@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Cherry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/ad-styles.css">
+    <style>
+        body {
+            background-color: #0f0f1a;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #ff69b4, #9400d3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .error-message {
+            display: none;
+            color: #ff4444;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 5px;
+        }
+        .success-message {
+            display: none;
+            color: #00C851;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            background: rgba(0, 200, 81, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white">
+    <div id="particles-js"></div>
+    
+    <div class="w-full max-w-md p-6">
+        <div class="glass p-8 rounded-lg">
+            <h1 class="text-3xl font-bold text-center mb-8 gradient-text">Login to Cherry</h1>
+            <form id="loginForm" class="space-y-6" autocomplete="on">
+                <div>
+                    <label for="username" class="block text-sm font-medium mb-2">Username</label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           required 
+                           minlength="3"
+                           autocomplete="username"
+                           class="w-full p-3 bg-gray-800/50 rounded border border-gray-700 focus:border-pink-500 focus:ring-1 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium mb-2">Password</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           required 
+                           minlength="6"
+                           autocomplete="current-password"
+                           class="w-full p-3 bg-gray-800/50 rounded border border-gray-700 focus:border-pink-500 focus:ring-1 focus:ring-pink-500">
+                </div>
+                <button type="submit" 
+                        class="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded hover:opacity-90 transition">
+                    Login
+                </button>
+                <div id="errorMessage" class="error-message"></div>
+                <div id="successMessage" class="success-message"></div>
+            </form>
+<p><a href="tos.html">Terms of Service</a></p>
+            <div class="mt-4 text-center">
+                <a href="register.html" class="text-pink-500 hover:text-pink-400">Don't have an account? Register</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/ad-handler.js"></script>
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#ffffff' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6
+                }
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Reset messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                if (data.success) {
+                    // Store user data
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Show success message
+                    successMessage.textContent = 'Login successful! Redirecting...';
+                    successMessage.style.display = 'block';
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = error.message || 'Login failed. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
