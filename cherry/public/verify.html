@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0c0d16;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="glass text-center">
+        <h1 class="text-3xl font-bold gradient-text mb-6">Verify Your Account</h1>
+        <p class="mb-6">Enter the verification code sent to your email.</p>
+        <div class="mb-6">
+            <input type="text" id="verificationCode" class="w-full p-3 bg-gray-800/50 rounded border border-gray-700 focus:border-violet-500 focus:ring-1 focus:ring-violet-500" placeholder="Enter verification code">
+        </div>
+        <button id="verifyBtn" class="btn-primary">Verify</button>
+    </div>
+
+    <script>
+        document.getElementById('verifyBtn').addEventListener('click', () => {
+            const code = document.getElementById('verificationCode').value;
+            if (code) {
+                // Handle verification logic here
+                alert('Verification code submitted: ' + code);
+            } else {
+                alert('Please enter the verification code');
+            }
+        });
+    </script>
+</body>
+</html>
