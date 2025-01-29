@@ -1,0 +1,17 @@
+.ad-container {
+    margin: 30px auto;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+}
+
+/* Responsive ad container */
+@media (max-width: 768px) {
+    .ad-container iframe {
+        max-width: 100%;
+        height: auto;
+    }
+}
