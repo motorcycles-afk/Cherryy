@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry Executor - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/ad-styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, #0c1339, #1f1f3a, #2d1f3d, #1f1f3a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-btn {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+        .nav-btn i {
+            color: #8b5cf6;
+        }
+        .license-box {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        .redeem-btn {
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .redeem-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .status-indicator.operational {
+            background-color: #34C759;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ff6b6b'
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ff6b6b',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        // Check if particles are paused and restart if necessary
+        setTimeout(() => {
+            if (pJSDom[0].pJS.particles.array.length === 0) {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: {
+                            value: 80,
+                            density: {
+                                enable: true,
+                                value_area: 800
+                            }
+                        },
+                        color: {
+                            value: '#ff6b6b'
+                        },
+                        shape: {
+                            type: 'circle'
+                        },
+                        opacity: {
+                            value: 0.5,
+                            random: false
+                        },
+                        size: {
+                            value: 3,
+                            random: true
+                        },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: '#ff6b6b',
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: {
+                            enable: true,
+                            speed: 2,
+                            direction: 'none',
+                            random: false,
+                            straight: false,
+                            out_mode: 'out',
+                            bounce: false
+                        }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: {
+                            onhover: {
+                                enable: true,
+                                mode: 'grab'
+                            },
+                            onclick: {
+                                enable: true,
+                                mode: 'push'
+                            },
+                            resize: true
+                        }
+                    },
+                    retina_detect: true
+                });
+            }
+        }, 2000);
+    });
+</script>
+<script src="https://kulroakonsu.net/88/tag.min.js" data-zone="128333" async data-cfasync="false"></script>
+<style>
+    :root {
+        --primary: #ff6b6b;
+        --secondary: #4ecdc4;
+        --dark: #1a1a1a;
+        --light: #ffffff;
+    }
+
+    body {
+        background-color: var(--dark);
+        color: var(--light);
+        font-family: 'Segoe UI', sans-serif;
+        overflow-x: hidden;
+    }
+
+    #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        color: white;
+        font-weight: bold;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card {
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .code-editor {
+        background: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        font-family: 'Consolas', monospace;
+    }
+
+    .stat-card {
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 20px;
+        }
+    }
+
+    /* Dark mode toggle */
+    .theme-switch {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    /* Loading animation */
+    .loader {
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-left-color: var(--primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {transform: rotate(360deg);}
+    }
+
+    /* Floating animation */
+    .float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+</style>
+<body>
+<div id="particles-js"></div>
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+</nav>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <span class="text-xl font-semibold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
+                            Cherry Executor
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="logoutBtn" class="nav-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Welcome Section -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">
+                        Welcome <span class="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">back</span>, 
+                        <span id="username" class="text-gray-300">User</span>
+                    </h1>
+                    <p class="text-gray-400 mt-1">
+                        Account Status: <span class="text-green-400">Active</span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-400">System Status</p>
+                    <div class="flex items-center justify-end">
+                        <span class="status-indicator operational"></span>
+                        <a href="/status.html" class="text-green-400 hover:underline">
+                            View Status Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-4 gap-4 mb-8">
+                <button class="nav-btn">
+                    <i class="fas fa-chart-line"></i>
+                    System Status
+                </button>
+                <button class="nav-btn">
+                    <i class="fas fa-headset"></i>
+                    Get Support
+                </button>
+                <button class="nav-btn">
+                    <i class="fas fa-key"></i>
+                    Get Key
+                </button>
+                <button class="nav-btn">
+                    <i class="fab fa-discord"></i>
+                    Join Discord
+                </button>
+            </div>
+
+            <!-- License Management -->
+            <div class="license-box mb-8">
+                <h2 class="text-xl font-semibold mb-4">License Management</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">License Key</label>
+                        <input type="text"
+                               id="licenseKey"
+                               class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                               placeholder="XXXXX-XXXXX-XXXXX-XXXXX">
+                    </div>
+                    <button id="redeemKeyBtn" class="redeem-btn w-full">
+                        Redeem Key
+                    </button>
+                </div>
+            </div>
+
+            <!-- Get Your Key -->
+            <div class="license-box">
+                <h2 class="text-xl font-semibold mb-4">Get Your Key</h2>
+                <p class="text-gray-400 mb-4">Complete 3 verification steps to get your key</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="mt-4">
+                    <button id="startVerification" class="redeem-btn">
+                        Start Step 1
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/ad-handler.js"></script>
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!token || !user) {
+            window.location.href = '/login.html';
+        }
+
+        // Display username
+        document.getElementById('username').textContent = user.username;
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+
+        // Redeem key handler
+        document.getElementById('redeemKeyBtn').addEventListener('click', async () => {
+            const key = document.getElementById('licenseKey').value;
+            if (!key) {
+                alert('Please enter a license key');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/user/redeem-key', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ key })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Key redeemed successfully!');
+                } else {
+                    alert(data.error || 'Failed to redeem key');
+                }
+            } catch (error) {
+                console.error('Error redeeming key:', error);
+                alert('Failed to redeem key');
+            }
+        });
+
+        let currentStep = 0;
+        document.getElementById('startVerification').addEventListener('click', () => {
+            if (currentStep < 3) {
+                currentStep++;
+                const progress = (currentStep / 3) * 100;
+                document.querySelector('.progress-fill').style.width = `${progress}%`;
+                document.getElementById('startVerification').textContent =
+                    currentStep < 3 ? `Start Step ${currentStep + 1}` : 'Verification Complete';
+            }
+        });
+    </script>
+</body>
+<script>
+    // Particles.js Configuration
+    particlesJS('particles-js', {
+        particles: {
+            number: {
+                value: 80,
+                density: {
+                    enable: true,
+                    value_area: 800
+                }
+            },
+            color: {
+                value: '#ff6b6b'
+            },
+            shape: {
+                type: 'circle'
+            },
+            opacity: {
+                value: 0.5,
+                random: false
+            },
+            size: {
+                value: 3,
+                random: true
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#ff6b6b',
+                opacity: 0.2,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: 'none',
+                random: false,
+                straight: false,
+                out_mode: 'out',
+                bounce: false
+            }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: 'grab'
+                },
+                onclick: {
+                    enable: true,
+                    mode: 'push'
+                },
+                resize: true
+            }
+        },
+        retina_detect: true
+    });
+</script>
+</html>
