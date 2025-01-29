@@ -226,20 +226,6 @@
             }
         }, 2000);
     });
-
-    // Anti-ad blocker script
-    function checkAdBlock() {
-        const adBlockEnabled = document.createElement('div');
-        adBlockEnabled.innerHTML = '&nbsp;';
-        adBlockEnabled.className = 'adsbox';
-        document.body.appendChild(adBlockEnabled);
-        const adBlockDetected = getComputedStyle(adBlockEnabled, ':after').getPropertyValue('content') === 'none';
-        if (adBlockDetected) {
-            alert('Ad blocker detected! Please disable it to continue.');
-        }
-    }
-
-    window.addEventListener('load', checkAdBlock);
 </script>
 <style>
     :root {
@@ -458,7 +444,6 @@
     </div>
 
     <script src="js/ad-handler.js"></script>
-    <script src="https://kulroakonsu.net/88/tag.min.js" data-zone="128333" async data-cfasync="false"></script>
     <script>
         // Check authentication
         const token = localStorage.getItem('token');
