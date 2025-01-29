@@ -105,5 +105,9 @@ function createAdContainers() {
 
 // Check for ad blocker and create ads on page load
 window.addEventListener('load', () => {
-    setTimeout(detectAdBlock, 500);
+    detectAdBlock().then((adBlockDetected) => {
+        if (!adBlockDetected) {
+            createAdContainers();
+        }
+    });
 });
