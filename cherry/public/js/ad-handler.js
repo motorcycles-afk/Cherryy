@@ -24,86 +24,60 @@ function detectAdBlock() {
     });
 }
 
-// Enhanced detection methods with specific checks for popular ad blockers
+// Enhanced detection methods with debugging
 function enhancedAdBlockDetection() {
     return new Promise((resolve) => {
         let detectionPoints = 0;
-        const checks = [];
+        const debugInfo = [];
 
-        // Test 1: Multiple bait elements with common ad blocker targets
-        const baitClasses = [
-            'ad', 'ads', 'adsbox', 'doubleclick', 'ad-placement',
-            'ad-placeholder', 'adbadge', 'BannerAd', 'sponsorad',
-            'adsbygoogle', 'banner-ads', 'ad-banner', 'ad_wrapper'
-        ];
-
-        baitClasses.forEach(className => {
-            const bait = document.createElement('div');
-            bait.className = className;
-            bait.style.cssText = 'position:absolute;left:-999px;top:-999px;width:1px;height:1px;';
-            document.body.appendChild(bait);
-            
-            if (window.getComputedStyle(bait).display === 'none' 
-                || bait.offsetHeight === 0 
-                || bait.offsetParent === null) {
-                detectionPoints++;
-            }
-            bait.remove();
-        });
-
-        // Test 2: Check for common ad scripts
-        const adScripts = [
-            '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-            '//ads.example.com/ads.js',
-            '//partner.googleadservices.com/gampad/ads',
-            '//securepubads.g.doubleclick.net/tag/js/gpt.js'
-        ];
-
-        adScripts.forEach(script => {
-            const testScript = document.createElement('script');
-            testScript.src = script;
-            testScript.onerror = () => detectionPoints++;
-            document.body.appendChild(testScript);
-            setTimeout(() => testScript.remove(), 100);
-        });
-
-        // Test 3: Check for ad network domains
-        const adNetworks = [
-            'google-analytics.com',
-            'doubleclick.net',
-            'googleadservices.com',
-            'buysellads.com'
-        ];
-
-        adNetworks.forEach(network => {
-            const img = new Image();
-            img.src = `//${network}/pixel.gif`;
-            img.onerror = () => detectionPoints++;
-        });
-
-        // Test 4: Check for AdBlock Plus specific elements
+        // Test 1: AdBlock Plus specific test
         const abpBait = document.createElement('div');
         abpBait.innerHTML = '&nbsp;';
         abpBait.className = 'adsbygoogle';
         document.body.appendChild(abpBait);
-        if (window.getComputedStyle(abpBait).display === 'none') {
-            detectionPoints += 2; // Higher weight for ABP detection
-        }
-        abpBait.remove();
-
-        // Test 5: Check for uBlock Origin specific elements
+        
+        // Test 2: uBlock specific test
         const ubBait = document.createElement('div');
-        ubBait.setAttribute('class', 'textads banner-ads banner_ads ad-zone ad-space adsbox');
+        ubBait.setAttribute('class', 'banner_ad adsbox');
         document.body.appendChild(ubBait);
-        if (ubBait.offsetHeight === 0) {
-            detectionPoints += 2; // Higher weight for uBlock detection
-        }
-        ubBait.remove();
 
-        // Wait for all checks and evaluate
+        // Test 3: Generic ad script test
+        const testScript = document.createElement('script');
+        testScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+        testScript.onerror = () => {
+            detectionPoints++;
+            debugInfo.push('Ad script load failed');
+        };
+        document.body.appendChild(testScript);
+
+        // Wait and check
         setTimeout(() => {
-            // Threshold adjusted based on testing
-            const adBlockDetected = detectionPoints >= 3;
+            // Check AdBlock Plus bait
+            if (window.getComputedStyle(abpBait).display === 'none') {
+                detectionPoints++;
+                debugInfo.push('ABP bait hidden');
+            }
+
+            // Check uBlock bait
+            if (ubBait.offsetHeight === 0) {
+                detectionPoints++;
+                debugInfo.push('uBlock bait hidden');
+            }
+
+            // Clean up
+            abpBait.remove();
+            ubBait.remove();
+            testScript.remove();
+
+            // Only detect if we have strong evidence
+            const adBlockDetected = detectionPoints >= 2;
+
+            console.log('Debug Info:', {
+                detectionPoints,
+                checks: debugInfo,
+                detected: adBlockDetected
+            });
+
             if (adBlockDetected) {
                 console.log('AdBlock detected with confidence');
                 restrictWebsiteAccess();
@@ -112,13 +86,18 @@ function enhancedAdBlockDetection() {
                 enableWebsiteAccess();
             }
             resolve(adBlockDetected);
-        }, 500);
+        }, 100);
     });
 }
 
 // Function to completely restrict website access
 function restrictWebsiteAccess() {
-    // Create full-page overlay
+    // Remove any existing overlay first
+    const existingOverlay = document.getElementById('adblock-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
     const overlay = document.createElement('div');
     overlay.id = 'adblock-overlay';
     overlay.style.cssText = `
@@ -148,12 +127,12 @@ function restrictWebsiteAccess() {
     `;
     
     content.innerHTML = `
-        <h2 style="color: #ff4444; margin-bottom: 20px;">Ad Blocker Detected!</h2>
+        <h2 style="color: #ff4444; margin-bottom: 20px;">Ad Blocker Detected</h2>
         <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
             We've detected that you're using an ad blocker. Our service relies on advertising revenue to stay free.
-            Please disable your ad blocker or whitelist our site to continue using our service.
+            Please disable your ad blocker or whitelist our site to continue.
         </p>
-        <button onclick="location.reload()" style="
+        <button onclick="window.location.reload()" style="
             padding: 10px 20px;
             font-size: 16px;
             background: #4CAF50;
@@ -163,9 +142,6 @@ function restrictWebsiteAccess() {
             cursor: pointer;
             transition: background 0.3s;
         ">I've Disabled My Ad Blocker</button>
-        <p style="font-size: 14px; margin-top: 20px; color: #888;">
-            After disabling your ad blocker, click the button above or refresh the page.
-        </p>
     `;
 
     overlay.appendChild(content);
@@ -173,31 +149,6 @@ function restrictWebsiteAccess() {
 
     // Prevent scrolling
     document.body.style.overflow = 'hidden';
-
-    // Disable all interactive elements
-    const elements = document.querySelectorAll('a, button, input, select, textarea');
-    elements.forEach(element => {
-        if (element.closest('#adblock-overlay') === null) {
-            element.style.pointerEvents = 'none';
-            if (element.tagName.toLowerCase() !== 'a') {
-                element.disabled = true;
-            }
-        }
-    });
-
-    // Prevent right-click
-    document.addEventListener('contextmenu', e => {
-        if (!e.target.closest('#adblock-overlay')) {
-            e.preventDefault();
-        }
-    });
-
-    // Block keyboard shortcuts
-    document.addEventListener('keydown', e => {
-        if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) {
-            e.preventDefault();
-        }
-    });
 }
 
 // Function to enable website access
@@ -207,16 +158,32 @@ function enableWebsiteAccess() {
         overlay.remove();
     }
     document.body.style.overflow = '';
-    
-    // Re-enable all interactive elements
-    const elements = document.querySelectorAll('a, button, input, select, textarea');
-    elements.forEach(element => {
-        element.style.pointerEvents = '';
-        if (element.tagName.toLowerCase() !== 'a') {
-            element.disabled = false;
-        }
-    });
 }
+
+// Initialize detection with retry
+function initAdBlockDetection() {
+    let retryCount = 0;
+    const maxRetries = 2;
+
+    function tryDetection() {
+        enhancedAdBlockDetection().then(detected => {
+            if (detected && retryCount < maxRetries) {
+                // If detected, wait and try again to reduce false positives
+                retryCount++;
+                console.log(`Retry attempt ${retryCount}...`);
+                setTimeout(tryDetection, 1000);
+            } else if (!detected) {
+                console.log('Site enabled - no ad blocker detected');
+            }
+        });
+    }
+
+    // Add random delay to avoid detection
+    setTimeout(tryDetection, Math.random() * 500 + 500);
+}
+
+// Start detection on page load
+window.addEventListener('load', initAdBlockDetection);
 
 // Function to show warning with more detailed message
 function showAdBlockWarning() {
@@ -325,21 +292,3 @@ function insertAdsDynamically() {
         }
     });
 }
-
-// Initialize detection
-function initAdBlockDetection() {
-    // Add some random delay to avoid pattern detection
-    const randomDelay = Math.floor(Math.random() * 500) + 500;
-    setTimeout(() => {
-        enhancedAdBlockDetection().then(detected => {
-            if (!detected) {
-                loadAds();
-            }
-        });
-    }, randomDelay);
-}
-
-// Check for ad blocker and create ads on page load
-window.addEventListener('load', () => {
-    setTimeout(initAdBlockDetection, 500);
-});
