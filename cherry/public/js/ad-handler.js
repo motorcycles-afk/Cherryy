@@ -41,6 +41,7 @@ const adBlockDetected = testAds.some(testAd => {
             if (adBlockDetected || document.querySelector('iframe[data-aa]')?.offsetHeight === 0) {
                 console.log('AdBlock detected');
                 showAdvancedAdBlockWarning();
+                blockPageContent();
                 resolve(true);
             } else {
                 console.log('No AdBlock detected');
@@ -69,6 +70,27 @@ function showAdvancedAdBlockWarning() {
         `;
         document.body.prepend(warningDiv);
     }
+}
+
+function blockPageContent() {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.color = 'white';
+    overlay.style.fontSize = '24px';
+    overlay.style.fontWeight = 'bold';
+    overlay.style.textAlign = 'center';
+    overlay.innerHTML = 'Please disable your ad blocker to continue using our service.';
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
 }
 
 // Function to create ad containers
