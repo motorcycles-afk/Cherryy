@@ -8,14 +8,6 @@
     background: transparent;
 }
 
-.adsbox {
-    position: absolute;
-    top: -999px;
-    left: -999px;
-    width: 1px;
-    height: 1px;
-}
-
 /* Responsive ad container */
 @media (max-width: 768px) {
     .ad-container iframe {
