@@ -1,0 +1,12 @@
+{"level":"info","message":"Server is running on port 3000","timestamp":"2025-01-27T15:11:19.343Z"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2025-01-27T15:17:54.781Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-01-27T15:17:55.406Z"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2025-01-30T19:52:06.949Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-01-30T19:52:07.415Z"}
+{"level":"info","message":{"duration":"27ms","ip":"::1","method":"GET","status":200,"url":"/","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:16.775Z"}
+{"level":"info","message":{"duration":"35ms","ip":"::1","method":"GET","status":304,"url":"/","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:18.646Z"}
+{"level":"warn","message":"Route not found: GET /favicon.ico","timestamp":"2025-01-30T19:52:20.675Z"}
+{"level":"info","message":{"duration":"215ms","ip":"::1","method":"GET","status":404,"url":"/favicon.ico","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:20.875Z"}
+{"level":"info","message":{"duration":"22ms","ip":"::1","method":"GET","status":200,"url":"/login.html","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:25.110Z"}
+{"level":"info","message":{"duration":"21ms","ip":"::1","method":"GET","status":200,"url":"/css/dashboard.css","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:25.366Z"}
+{"level":"info","message":{"duration":"52ms","ip":"::1","method":"POST","status":401,"url":"/api/auth/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 OPR/114.0.0.0 (Edition std-2)"},"timestamp":"2025-01-30T19:52:32.617Z"}
