@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .url-input {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .url-input input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Key Generator</h1>
+    <div class="url-input">
+        <label for="url1">URL 1:</label>
+        <input type="text" id="url1" placeholder="Enter first URL">
+    </div>
+    <div class="url-input">
+        <label for="url2">URL 2:</label>
+        <input type="text" id="url2" placeholder="Enter second URL">
+    </div>
+    <div class="url-input">
+        <label for="url3">URL 3:</label>
+        <input type="text" id="url3" placeholder="Enter third URL">
+    </div>
+    <button onclick="generateKey()">Generate Key</button>
+    <div id="result"></div>
+
+    <script>
+        async function generateKey() {
+            const urls = [
+                document.getElementById('url1').value,
+                document.getElementById('url2').value,
+                document.getElementById('url3').value
+            ];
+
+            if (urls.some(url => !url)) {
+                alert('Please fill in all URLs');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/keys/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ urls })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = `
+                        <h3>Generated Results:</h3>
+                        <p><strong>License Key:</strong> ${data.key}</p>
+                        <h4>Shortened URLs:</h4>
+                        <ul>
+                            ${data.shortUrls.map((url, index) => `
+                                <li>URL ${index + 1}: <a href="${url}" target="_blank">${url}</a></li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while generating the key');
+            }
+        }
+    </script>
+</body>
+</html>
