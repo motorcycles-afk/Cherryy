@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Key - Cherry Executor</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: #ff1493;
+        }
+        .nav-btn {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .nav-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .nav-btn i {
+            color: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="particles-js"></div>
+
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="glass p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold mb-4 gradient-text">Cherry Key System</h2>
+                <p class="text-gray-400 mb-6">Please complete verification to get your key</p>
+
+                <div id="loginForm">
+                    <input type="text" id="username" placeholder="Username" class="input-field" autocomplete="username" />
+                    <input type="password" id="password" placeholder="Password" class="input-field" autocomplete="current-password" />
+                    <button onclick="login()" class="nav-btn bg-pink-600 hover:bg-pink-700">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                </div>
+
+                <div id="verificationArea" style="display: none;" class="mt-6">
+                    <button onclick="KeyManagement.startKeyGeneration()" class="nav-btn bg-pink-600 hover:bg-pink-700">
+                        <i class="fas fa-play mr-2"></i>Start Verification
+                    </button>
+                    <div id="keyInfo" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="js/key-management.js"></script>
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ff69b4' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#ff69b4', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('user_id', data.user.id);
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('verificationArea').style.display = 'block';
+                    localStorage.setItem('isLoggedIn', 'true');
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again.');
+            });
+        }
+
+        // Check if user is already logged in
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('verificationArea').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
