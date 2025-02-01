@@ -1,0 +1,16 @@
+{
+  "tickets": [
+    {
+      "id": "1",
+      "title": "Sample Support Ticket",
+      "description": "This is a sample support ticket to demonstrate the system.",
+      "status": "open",
+      "priority": "medium",
+      "category": "technical",
+      "createdBy": "user123",
+      "createdAt": "2025-01-31T08:47:35.000Z",
+      "comments": [],
+      "attachments": []
+    }
+  ]
+}
